@@ -1,0 +1,15 @@
+config:
+  MD013:
+    line_length: 120
+    code_blocks: false
+    tables: false
+  MD041: false
+
+globs:
+  - "*.md"
+  - "docs/**/*.md"
+  - ".github/**/*.md"
+
+ignores:
+  - "venv/**"
+  - ".venv/**"

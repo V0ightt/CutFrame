@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="CutFrame is a fast, private, local video cutter for precise local-file and YouTube range exports.">
+    <meta name="application-name" content="CutFrame">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#f4f6f8" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
+    <title>CutFrame | Video cutter</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" id="brandHome" aria-label="CutFrame home">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <span>CutFrame</span>
+      </a>
+
+      <details class="health-menu" id="healthMenu">
+        <summary class="tool-health" id="toolHealth">
+          <span class="health-indicator" aria-hidden="true"></span>
+          <span id="toolHealthLabel">Checking setup</span>
+        </summary>
+        <div class="health-panel" aria-live="polite">
+          <strong id="healthTitle">Checking media tools</strong>
+          <p id="healthMessage">CutFrame is checking local export support.</p>
+          <details class="diagnostic-details">
+            <summary>Technical details</summary>
+            <pre id="toolPaths">Checking tool availability</pre>
+          </details>
+        </div>
+      </details>
+    </header>
+
+    <main class="workspace">
+      <section class="intro" aria-labelledby="pageTitle">
+        <p class="eyebrow">Local video cutter</p>
+        <h1 id="pageTitle">Trim a video without opening an editor.</h1>
+        <p>Preview first. Local files stay in your browser until export. YouTube previews stream directly from YouTube.</p>
+      </section>
+
+      <section class="editor-shell" aria-label="Video cutter">
+        <div class="source-panel">
+          <div class="source-tabs" role="tablist" aria-label="Video source">
+            <button
+              class="source-tab active"
+              id="fileTab"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              aria-controls="fileSource"
+              tabindex="0"
+            >
+              From this device
+            </button>
+            <button
+              class="source-tab"
+              id="urlTab"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="urlSource"
+              tabindex="-1"
+            >
+              From a link
+            </button>
+          </div>
+
+          <div class="source-view active" id="fileSource" role="tabpanel" aria-labelledby="fileTab">
+            <label class="drop-zone" id="dropZone" for="videoFile">
+              <input
+                id="videoFile"
+                name="video"
+                type="file"
+                accept="video/*,.mkv,.avi,.m4v,.mpeg,.mpg,.ts"
+                aria-describedby="fileLimit"
+              >
+              <span class="drop-title">Drop a video here</span>
+              <span class="drop-copy" id="fileLimit">Choose a supported video file.</span>
+              <span class="secondary-button" aria-hidden="true">Choose video</span>
+            </label>
+          </div>
+
+          <div class="source-view" id="urlSource" role="tabpanel" aria-labelledby="urlTab" hidden>
+            <form class="url-form" id="urlForm">
+              <label for="videoUrl">YouTube video link</label>
+              <div class="url-row">
+                <input
+                  id="videoUrl"
+                  name="url"
+                  type="url"
+                  inputmode="url"
+                  placeholder="https://www.youtube.com/watch?v=VIDEO_ID"
+                  autocomplete="off"
+                  aria-describedby="urlHelp sourceStatus"
+                  required
+                >
+                <button class="secondary-button" id="previewUrlButton" type="submit">Preview video</button>
+              </div>
+              <p class="field-help" id="urlHelp">Previewing contacts YouTube or Google through a privacy-enhanced embed. CutFrame does not download the video until export.</p>
+            </form>
+          </div>
+
+          <p class="source-status" id="sourceStatus" role="status" aria-live="polite"></p>
+        </div>
+
+        <div class="workbench">
+          <div class="preview-column">
+            <div class="preview-stack">
+              <section class="preview-panel" id="previewPanel" aria-label="Video preview" aria-busy="false">
+                <div class="preview-stage">
+                  <div class="empty-preview" id="emptyPreview">
+                    <span class="empty-preview-mark" aria-hidden="true"><span></span></span>
+                    <strong>No video selected</strong>
+                    <span id="emptyPreviewCopy">Choose a file or paste a YouTube link.</span>
+                  </div>
+
+                  <div class="loading-preview" id="loadingPreview" hidden>
+                    <div class="preview-skeleton" aria-hidden="true"></div>
+                    <strong id="loadingPreviewTitle">Loading preview</strong>
+                    <span id="loadingPreviewCopy">Reading video details</span>
+                    <button class="secondary-button compact" id="cancelPreview" type="button">Cancel</button>
+                  </div>
+
+                  <div class="preview-error" id="previewError" role="alert" tabindex="-1" hidden>
+                    <strong id="previewErrorTitle">Preview unavailable</strong>
+                    <span id="previewErrorMessage">CutFrame could not open this video.</span>
+                    <div class="preview-error-actions">
+                      <button class="secondary-button compact" id="retryPreview" type="button">Try again</button>
+                      <a class="text-link" id="openPreviewSource" href="#" target="_blank" rel="noopener noreferrer" hidden>Open on YouTube</a>
+                    </div>
+                  </div>
+
+                  <video id="videoPreview" controls playsinline preload="metadata" hidden></video>
+                  <div class="youtube-preview" id="youtubePreview" hidden>
+                    <div id="youtubePlayer"></div>
+                  </div>
+                </div>
+
+                <div class="preview-meta" id="previewMeta" hidden>
+                  <div>
+                    <strong id="sourceName">Untitled video</strong>
+                    <span id="sourceDetails">Ready to trim</span>
+                  </div>
+                  <div class="preview-meta-actions">
+                    <a class="text-button" id="openSourceLink" href="#" target="_blank" rel="noopener noreferrer" hidden>Open source</a>
+                    <button class="text-button" id="replaceButton" type="button">Replace</button>
+                  </div>
+                </div>
+                <p class="preview-notice" id="previewNotice" role="status" aria-live="polite"></p>
+              </section>
+
+              <p class="privacy-note">
+                Local previews stay in your browser until export. YouTube previews contact YouTube or Google through the embedded player. CutFrame downloads only the selected YouTube range when you export.
+              </p>
+            </div>
+          </div>
+
+          <div class="controls-column">
+            <section class="timeline-panel" id="timelinePanel" aria-labelledby="trimHeading" aria-disabled="true">
+              <div class="section-heading">
+                <div>
+                  <h2 id="trimHeading">Trim</h2>
+                  <p id="selectionSummary">Choose a video to set the range.</p>
+                </div>
+                <div class="timeline-actions">
+                  <button class="secondary-button compact" id="previewSelection" type="button" disabled>Play clip</button>
+                  <button class="secondary-button compact" id="captureFrame" type="button" disabled>Save frame</button>
+                </div>
+              </div>
+
+              <p class="capability-note" id="capabilityNote" hidden>Frame capture is available for local previews.</p>
+
+              <div class="range-wrap">
+                <div class="range-labels" aria-hidden="true">
+                  <span id="rangeStartLabel">00:00</span>
+                  <span id="rangeMiddleLabel">00:00</span>
+                  <span id="rangeEndLabel">00:00</span>
+                </div>
+                <div class="range-track" id="rangeTrack">
+                  <div class="range-selection" aria-hidden="true"></div>
+                  <div class="range-playhead" aria-hidden="true"></div>
+                  <input id="startRange" class="range-input start-range" type="range" min="0" max="100" step="0.001" value="0" aria-label="Clip start" aria-describedby="selectionSummary" aria-valuetext="00:00" disabled>
+                  <input id="endRange" class="range-input end-range" type="range" min="0" max="100" step="0.001" value="100" aria-label="Clip end" aria-describedby="selectionSummary" aria-valuetext="00:00" disabled>
+                </div>
+              </div>
+
+              <div class="time-grid">
+                <div class="field-group">
+                  <label for="startTime">Start time</label>
+                  <div class="time-control">
+                    <input id="startTime" type="text" value="00:00" inputmode="decimal" autocomplete="off" aria-describedby="timeHelp rangeError" disabled>
+                    <button class="inline-button" id="setStartCurrent" type="button" disabled>Set start</button>
+                  </div>
+                </div>
+                <div class="field-group">
+                  <label for="endTime">End time</label>
+                  <div class="time-control">
+                    <input id="endTime" type="text" value="00:00" inputmode="decimal" autocomplete="off" aria-describedby="timeHelp rangeError" disabled>
+                    <button class="inline-button" id="setEndCurrent" type="button" disabled>Set end</button>
+                  </div>
+                </div>
+              </div>
+              <p class="field-help" id="timeHelp">Use seconds, MM:SS, or HH:MM:SS.</p>
+              <p class="inline-error" id="rangeError" role="alert"></p>
+            </section>
+
+            <form class="output-panel" id="clipForm">
+              <div class="section-heading">
+                <div>
+                  <h2>Export</h2>
+                  <p>Create a new file from the selected range.</p>
+                </div>
+              </div>
+
+              <div class="settings-grid">
+                <div class="field-group">
+                  <label for="outputFormat">Format</label>
+                  <select id="outputFormat" name="format">
+                    <option value="mp4">MP4 video</option>
+                    <option value="webm">WebM video</option>
+                    <option value="mov">MOV video</option>
+                    <option value="gif">Animated GIF</option>
+                    <option value="mp3">MP3 audio</option>
+                    <option value="m4a">M4A audio</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label for="videoQuality">Quality</label>
+                  <select id="videoQuality" name="quality">
+                    <option value="original">Original resolution</option>
+                    <option value="1080">1080p maximum</option>
+                    <option value="720">720p maximum</option>
+                    <option value="480">480p maximum</option>
+                    <option value="360">360p maximum</option>
+                  </select>
+                </div>
+              </div>
+
+              <details class="more-options" id="moreOptions">
+                <summary>More options</summary>
+                <div class="option-list">
+                  <label class="utility-option">
+                    <input id="muteAudio" name="mute" type="checkbox">
+                    <span>
+                      <strong>Mute audio</strong>
+                      <small>Export video without its audio track.</small>
+                    </span>
+                  </label>
+                  <label class="utility-option">
+                    <input id="stripMetadata" name="strip_metadata" type="checkbox" checked>
+                    <span>
+                      <strong>Remove metadata</strong>
+                      <small>Remove title, author, and device tags.</small>
+                    </span>
+                  </label>
+                  <label class="utility-option">
+                    <input id="fastCopy" name="fast_copy" type="checkbox">
+                    <span>
+                      <strong>Fast copy</strong>
+                      <small>Usually faster, but the start may move to a nearby keyframe. If copying is incompatible, CutFrame re-encodes automatically.</small>
+                    </span>
+                  </label>
+                </div>
+
+                <details class="youtube-troubleshooting" id="youtubeTroubleshooting" hidden>
+                  <summary>Having trouble exporting from YouTube?</summary>
+                  <div class="field-group troubleshooting-field">
+                    <label for="cookieBrowser">Use browser sign-in</label>
+                    <select id="cookieBrowser" name="cookie_browser">
+                      <option value="none">Do not use browser cookies</option>
+                      <option value="chrome">Chrome</option>
+                      <option value="edge">Microsoft Edge</option>
+                      <option value="firefox">Firefox</option>
+                      <option value="brave">Brave</option>
+                    </select>
+                    <p class="field-help">Opt in only when YouTube asks you to sign in. yt-dlp reads that browser's cookies locally for this export; CutFrame never selects or copies them automatically.</p>
+                  </div>
+                </details>
+              </details>
+
+              <div class="export-note" id="exportNote">
+                MP4 works almost everywhere. Smaller videos are not enlarged.
+              </div>
+
+              <button class="primary-button" id="createClip" type="submit" disabled>
+                <span id="createClipLabel">Export clip</span>
+              </button>
+              <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+
+              <section class="export-job" id="exportJob" aria-labelledby="exportPhase" hidden>
+                <dl class="job-summary" id="jobSummary" aria-label="Submitted export settings">
+                  <div><dt>Source</dt><dd id="jobSource">Not submitted</dd></div>
+                  <div><dt>Range</dt><dd id="jobRange">Not submitted</dd></div>
+                  <div><dt>Output</dt><dd id="jobOutput">Not submitted</dd></div>
+                </dl>
+                <div class="export-job-heading">
+                  <div>
+                    <strong id="exportPhase">Preparing export</strong>
+                    <span id="exportElapsed">Starting</span>
+                  </div>
+                  <span class="export-percent" id="exportPercent">0%</span>
+                </div>
+                <progress id="exportProgress" max="100" value="0" aria-labelledby="exportPhase" aria-describedby="exportMessage">0%</progress>
+                <p id="exportMessage">Preparing your clip.</p>
+                <p class="export-error" id="exportError" role="alert"></p>
+                <p class="sr-only" id="exportAnnouncement" role="status" aria-live="polite" aria-atomic="true"></p>
+                <div class="export-actions">
+                  <button class="secondary-button compact" id="cancelExport" type="button">Cancel export</button>
+                  <a class="download-button" id="downloadResult" href="#" hidden>Download clip</a>
+                </div>
+              </section>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <noscript><p class="noscript-message">CutFrame requires JavaScript for local previews, trimming, uploads, and export progress.</p></noscript>
+    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  </body>
+</html>

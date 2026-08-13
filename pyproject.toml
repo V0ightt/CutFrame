@@ -1,0 +1,18 @@
+[tool.cutframe]
+version = "0.1.0"
+python = ">=3.10,<3.15"
+distribution = "source-only"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+extend-exclude = [
+    ".pytest-tmp",
+    "instance",
+    "venv",
+]
+
+[tool.ruff.lint]
+# Keep the initial lint gate focused on correctness while the existing source is
+# incrementally brought under Ruff's broader style and security rule sets.
+select = ["E4", "E7", "E9", "F"]

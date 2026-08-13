@@ -1,0 +1,96 @@
+name: Bug report
+description: Report a reproducible problem in CutFrame
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem. Do not include cookies, credentials, signed
+        media URLs, private filenames, personal paths, or copyrighted/private media.
+        Report security vulnerabilities privately according to SECURITY.md.
+
+  - type: input
+    id: version
+    attributes:
+      label: CutFrame version
+      description: Use a release version or commit identifier.
+      placeholder: 0.1.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Operating system
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: python
+    attributes:
+      label: Python and browser versions
+      placeholder: Python 3.12.8; Firefox 141
+    validations:
+      required: true
+
+  - type: textarea
+    id: tools
+    attributes:
+      label: Media tool versions
+      description: Provide version numbers only; redact executable paths.
+      placeholder: |
+        FFmpeg 7.1
+        yt-dlp 2026.07.04
+        Node.js 22.15.1
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: Use generated or public media and include the smallest repeatable sequence.
+      placeholder: |
+        1. Start CutFrame with the default configuration.
+        2. Select a generated MP4 fixture.
+        3. Set the range to 00:01.250–00:03.500.
+        4. Choose MP4 exact export.
+        5. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and redacted error
+      description: Review every diagnostic before posting it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Note whether the source is local or YouTube and whether fast copy was selected.
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Privacy and responsible-use confirmation
+      options:
+        - label: I removed secrets, cookies, signed URLs, private paths, and private media.
+          required: true
+        - label: I own or have permission to use any media involved in this report.
+          required: true
