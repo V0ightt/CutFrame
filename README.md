@@ -27,8 +27,6 @@ CutFrame is local-first: it has no accounts, cloud storage, analytics, or databa
 
 ![CutFrame's local video selection and trimming interface](docs/assets/cutframe-ui.png)
 
-The screenshot uses an empty source state and contains no local filenames, paths,
-accounts, browser chrome, or private media.
 
 ## Requirements
 
