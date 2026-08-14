@@ -5,60 +5,60 @@ explicit maintainer approval after every blocking item passes.
 
 ## Repository and history
 
-- [ ] The original `.git` directory/history is available for review, or the
+- [x] The original `.git` directory/history is available for review, or the
   maintainer has explicitly authorized a new history.
-- [ ] The default branch is `main`.
-- [ ] The configured remote owner and exact repository name `CutFrame` are verified.
-- [ ] Tracked files and every reachable Git object pass secret and private-artifact
+- [x] The default branch is `main`.
+- [x] The configured remote owner and exact repository name `CutFrame` are verified.
+- [x] Tracked files and every reachable Git object pass secret and private-artifact
   scans.
-- [ ] No credentials require rotation or history cleaning.
-- [ ] The worktree contains only intentional release changes.
+- [x] No credentials require rotation or history cleaning.
+- [x] The worktree contains only intentional release changes.
 
 ## Source and behavior
 
 - [ ] Complete Python tests pass on all CI matrix entries.
-- [ ] Python compilation and selected Ruff checks pass.
-- [ ] JavaScript syntax checks pass.
+- [x] Python compilation and selected Ruff checks pass.
+- [x] JavaScript syntax checks pass.
 - [ ] Browser smoke/responsive checks pass on Windows and Ubuntu without orphaned
   processes.
-- [ ] Generated FFmpeg fixtures cover short, long-metadata, fractional, beginning,
+- [x] Generated FFmpeg fixtures cover short, long-metadata, fractional, beginning,
   middle, near-end, and copy-fallback cases.
-- [ ] Previewing YouTube creates only the privacy-enhanced iframe and does not invoke
+- [x] Previewing YouTube creates only the privacy-enhanced iframe and does not invoke
   yt-dlp.
-- [ ] Command-contract tests prove remote exports use `--download-sections` and
+- [x] Command-contract tests prove remote exports use `--download-sections` and
   `--no-playlist`.
-- [ ] Chunk upload retry, cancellation, offsets, limits, and disk checks pass.
-- [ ] Job progress, bounded concurrency, cancellation, cleanup, Range, and direct
+- [x] Chunk upload retry, cancellation, offsets, limits, and disk checks pass.
+- [x] Job progress, bounded concurrency, cancellation, cleanup, Range, and direct
   download tests pass.
-- [ ] A fresh documented installation starts on `127.0.0.1:5000`.
-- [ ] No temporary CutFrame, Python, browser, FFmpeg, or yt-dlp process remains.
+- [x] A fresh documented installation starts on `127.0.0.1:5000`.
+- [x] No temporary CutFrame, Python, browser, FFmpeg, or yt-dlp process remains.
 
 ## Security and privacy
 
-- [ ] Host, Origin/CSRF, URL, path, symlink, filename, range, size, offset, and job-ID
+- [x] Host, Origin/CSRF, URL, path, symlink, filename, range, size, offset, and job-ID
   controls pass adversarial tests.
-- [ ] Logs, API responses, and ordinary UI diagnostics do not expose absolute local
+- [x] Logs, API responses, and ordinary UI diagnostics do not expose absolute local
   paths, cookies, tokens, or signed media URLs.
-- [ ] Active jobs are protected from stale cleanup.
-- [ ] Defaults remain loopback-only, two workers, 32 GiB local input, 8 MiB chunks,
+- [x] Active jobs are protected from stale cleanup.
+- [x] Defaults remain loopback-only, two workers, 32 GiB local input, 8 MiB chunks,
   8 GiB output, 512 MiB disk reserve, and roughly 24-hour retention.
-- [ ] Cookie access remains off by default and requires explicit user selection.
+- [x] Cookie access remains off by default and requires explicit user selection.
 - [ ] Private vulnerability reporting is enabled immediately after making the
   repository public and before publishing the release (GitHub exposes this feature
   for public repositories).
 
 ## Licensing and documentation
 
-- [ ] `LICENSE` contains `Copyright (c) 2026 V0ightt` and the unmodified MIT terms.
+- [x] `LICENSE` contains `Copyright (c) 2026 V0ightt` and the unmodified MIT terms.
 - [ ] Source ownership and contributor licensing are confirmed.
-- [ ] `THIRD_PARTY_NOTICES.md` matches the exact dependency resolution.
-- [ ] The source archive contains no virtual environment, wheelhouse, media tool, or
+- [x] `THIRD_PARTY_NOTICES.md` matches the exact dependency resolution.
+- [x] The source archive contains no virtual environment, wheelhouse, media tool, or
   other bundled binary.
 - [ ] README setup works on Windows, macOS, and Linux.
-- [ ] The privacy-reviewed `docs/assets/cutframe-ui.png` exists, or the README
+- [x] The privacy-reviewed `docs/assets/cutframe-ui.png` exists, or the README
   screenshot reservation is removed.
 - [ ] `CHANGELOG.md` has the actual release date instead of `TBD`.
-- [ ] All public branding reads `CutFrame`, and creator attribution uses only the
+- [x] All public branding reads `CutFrame`, and creator attribution uses only the
   approved name and LinkedIn link.
 
 ## GitHub settings

@@ -3,9 +3,8 @@
 Audit date: 2026-08-13
 
 This report records the local release-candidate checks. It is not a publication
-approval. Git metadata was absent from the supplied workspace, so Git status,
-remotes, tracked-file state, source ownership, and reachable-history secret scans
-remain unverified.
+approval. Git metadata was restored after the initial audit and has now been
+verified locally and against the configured private remote.
 
 ## Final accepted checks
 
@@ -30,6 +29,11 @@ remain unverified.
 | `bash -n run.sh` | Passed with Git Bash. |
 | TOML parsing for `pyproject.toml` | Passed. |
 | Direct upstream `git ls-remote` checks | All pinned GitHub Action SHAs matched their official version tags. |
+| `git status --porcelain=v2`, `git diff`, and `git diff --cached` | The restored committed tree was clean and synchronized with `origin/main` before this report update. |
+| `git fsck --full --no-reflogs --unreachable` | Passed with no integrity or unreachable-object findings. |
+| Checksummed Gitleaks 8.30.1 `git` scan | One reachable commit and approximately 373 KB scanned; no leaks found. |
+| Tracked-file and reachable-blob inventory | No environment, cache, job, media, browser-profile, credential, executable, archive, database, or log artifact found. |
+| Read-only local, remote, and GitHub metadata checks | `main` is the private remote's default branch; `origin` is the exact `V0ightt/CutFrame` repository and confirms V0ightt as its GitHub owner. |
 
 ## Installation and launch reproduction
 
@@ -103,8 +107,11 @@ not start yt-dlp or a media download.
 
 ## Licensing outcome
 
-CutFrame source is a viable MIT source-only release, subject to confirming source
-ownership from the missing Git history. `LICENSE` attributes:
+CutFrame source is a viable MIT source-only release. The configured GitHub remote
+confirms V0ightt as the repository owner. The sole root commit uses a different
+author display name and a personal commit email, however, so the maintainer must
+either confirm that provenance or explicitly authorize replacing the metadata
+before publication. `LICENSE` attributes:
 
 ```text
 Copyright (c) 2026 V0ightt
@@ -121,14 +128,17 @@ artifact-specific GPL and notices/source-compliance review.
 
 ## Remaining blockers and limitations
 
-1. Restore the original `.git` directory or provide the original clone. Then verify
-   status, remote ownership/name, default branch, tracked files, source ownership,
-   and every reachable Git object with a history-aware secret scan.
-2. Push privately and let the prepared Windows/Linux CI pass before changing
-   visibility. CodeQL is deliberately skipped while private because GitHub Code
-   Security is not available to every private repository; dispatch it immediately
-   after publication and before publishing the draft release. Dependency review
-   will run on subsequent pull requests.
+1. Resolve the sole commit's author/committer privacy mismatch. Changing it requires
+   explicit permission to amend the one-commit history and update the private
+   remote with `--force-with-lease`; accepting it would expose an unsupplied email
+   when the repository becomes public.
+2. The GitHub connector reports no status checks or workflow runs on the current
+   private commit. After resolving commit metadata, push privately and require the
+   prepared Windows/Linux CI to pass before changing visibility. CodeQL is
+   deliberately skipped while private because GitHub Code Security is not
+   available to every private repository; dispatch it immediately after
+   publication and before publishing the draft release. Dependency review will run
+   on subsequent pull requests.
 3. Replace `TBD` in `CHANGELOG.md` with the actual authorized release date.
 4. Enable private vulnerability reporting and the selected branch protections.
 5. YouTube availability is best effort; embedding, account, region, age, removal,

@@ -4,6 +4,7 @@
   const MAX_CLIP_SECONDS = 12 * 60 * 60;
   const TERMINAL_JOB_STATES = new Set(["ready", "error", "cancelled"]);
   const ACTIVE_WORK_KEY = "cutframe.active-work.v1";
+  const THEME_KEY = "cutframe.theme.v1";
   const API_MUTATION_HEADER = Object.freeze({ "X-CutFrame-Request": "1" });
 
   const state = {
@@ -36,6 +37,7 @@
 
   const elements = {
     brandHome: document.querySelector("#brandHome"),
+    themeToggle: document.querySelector("#themeToggle"),
     healthMenu: document.querySelector("#healthMenu"),
     toolHealth: document.querySelector("#toolHealth"),
     toolHealthLabel: document.querySelector("#toolHealthLabel"),
@@ -117,6 +119,43 @@
   };
 
   let youtubeApiPromise = null;
+  const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+  function readStoredTheme() {
+    try {
+      const saved = localStorage.getItem(THEME_KEY);
+      return saved === "light" || saved === "dark" ? saved : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function themeIsDark() {
+    const stored = readStoredTheme();
+    return stored ? stored === "dark" : darkQuery.matches;
+  }
+
+  function syncThemeToggle() {
+    elements.themeToggle.setAttribute("aria-pressed", themeIsDark() ? "true" : "false");
+  }
+
+  function applyStoredTheme() {
+    const stored = readStoredTheme();
+    if (stored) document.documentElement.dataset.theme = stored;
+    else delete document.documentElement.dataset.theme;
+    syncThemeToggle();
+  }
+
+  function toggleTheme() {
+    const next = themeIsDark() ? "light" : "dark";
+    try {
+      localStorage.setItem(THEME_KEY, next);
+    } catch {
+      /* Keep the switch working when storage is unavailable. */
+    }
+    document.documentElement.dataset.theme = next;
+    syncThemeToggle();
+  }
 
   function mutationHeaders(extra = {}) {
     return { ...API_MUTATION_HEADER, ...extra };
@@ -1601,6 +1640,8 @@
     if (state.processing) return;
     handleLocalFile(event.dataTransfer?.files?.[0]);
   });
+  elements.themeToggle.addEventListener("click", toggleTheme);
+  darkQuery.addEventListener("change", syncThemeToggle);
   elements.urlForm.addEventListener("submit", previewUrl);
   elements.cancelPreview.addEventListener("click", () => {
     if (state.previewRequest) state.previewRequest.abort();
@@ -1679,6 +1720,7 @@
     if (state.localObjectUrl) URL.revokeObjectURL(state.localObjectUrl);
   });
 
+  applyStoredTheme();
   updateExportOptions();
   showPreviewState("empty");
   setEditorEnabled(false);

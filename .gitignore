@@ -23,6 +23,7 @@ htmlcov/
 # Build and package output
 build/
 dist/
+node_modules/
 *.egg-info/
 *.egg
 wheelhouse/

@@ -19,27 +19,33 @@
         <span>CutFrame</span>
       </a>
 
-      <details class="health-menu" id="healthMenu">
-        <summary class="tool-health" id="toolHealth">
-          <span class="health-indicator" aria-hidden="true"></span>
-          <span id="toolHealthLabel">Checking setup</span>
-        </summary>
-        <div class="health-panel" aria-live="polite">
-          <strong id="healthTitle">Checking media tools</strong>
-          <p id="healthMessage">CutFrame is checking local export support.</p>
-          <details class="diagnostic-details">
-            <summary>Technical details</summary>
-            <pre id="toolPaths">Checking tool availability</pre>
-          </details>
-        </div>
-      </details>
+      <div class="topbar-actions">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false">
+          <span class="theme-mark" aria-hidden="true"></span>
+          <span class="theme-label">Dark mode</span>
+        </button>
+
+        <details class="health-menu" id="healthMenu">
+          <summary class="tool-health" id="toolHealth">
+            <span class="health-indicator" aria-hidden="true"></span>
+            <span id="toolHealthLabel">Checking setup</span>
+          </summary>
+          <div class="health-panel" aria-live="polite">
+            <strong id="healthTitle">Checking media tools</strong>
+            <p id="healthMessage">CutFrame is checking local export support.</p>
+            <details class="diagnostic-details">
+              <summary>Technical details</summary>
+              <pre id="toolPaths">Checking tool availability</pre>
+            </details>
+          </div>
+        </details>
+      </div>
     </header>
 
     <main class="workspace">
       <section class="intro" aria-labelledby="pageTitle">
         <p class="eyebrow">Local video cutter</p>
         <h1 id="pageTitle">Trim a video without opening an editor.</h1>
-        <p>Preview first. Local files stay in your browser until export. YouTube previews stream directly from YouTube.</p>
       </section>
 
       <section class="editor-shell" aria-label="Video cutter">
